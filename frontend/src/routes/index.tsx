@@ -1,43 +1,49 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import Header from "../header";
 
-const landingPage = (
-  <div className="App">
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+
+const Glossary = () => {
+  const [files, setFiles] = useState([]);
+
+  // Replace with your GitHub username, repo name, branch, and personal access token
+  const username = 'luccavp12';
+  const repo = 'Obsidian';
+  const branch = 'main';
+  const token = '';
+
+  useEffect(() => {
+    // Fetch list of files in the repository with authentication
+    axios
+      .get(`https://api.github.com/repos/${username}/${repo}/git/trees/${branch}?recursive=1`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const markdownFiles = response.data.tree.filter((file) =>
+          file.path.endsWith('.md')
+        );
+        setFiles(markdownFiles);
+      })
+      .catch((error) => console.error('Error fetching files:', error));
+  }, []);
+
+  return (
     <div>
-      <Header />
-      <div className="p-4">
-        <p className="text-left p-4">
-          This is a demo webstore built for learning the following technologies:
-        </p>
-        <div className="p-4">
-          <p className="text-left font-bold">Backend:</p>
-          <ul className="list-disc list-inside">
-            <li>Javascript</li>
-            <li>Node</li>
-          </ul>
-        </div>
-        <div className="p-4">
-          <p className="text-left font-bold">Frontend:</p>
-          <ul className="list-disc list-inside">
-            <li>Typescript</li>
-            <li>React</li>
-            <li>Redux</li>
-            <li>Tailwind</li>
-          </ul>
-        </div>
-      </div>
-      <div className="p-4 text-center">
-        <Link
-          to="/product-groups"
-        >
-          <button>Enter</button>
-        </Link>
-      </div>
+      <h1>Glossary</h1>
+      <ul>
+        {files.map((file) => (
+          <li key={file.path}>
+            <Link to={`/page/${encodeURIComponent(file.path)}`}>
+              {file.path.split('/').pop()}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
-  </div>
-);
+  );
+};
 
-export default function Index() {
-  return landingPage;
-}
+export default Glossary;

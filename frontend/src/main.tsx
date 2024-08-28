@@ -7,6 +7,7 @@ import Products from "./routes/products";
 import { Product } from "./routes/product";
 import "./index.css";
 import Login from "./routes/login";
+import MarkdownPage from "./routes/file_view";
 import { store } from "./utils/store";
 import { Provider } from "react-redux";
 
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
     path: "product/:pgId/:pId",
     element: <Product />,
   },
+  {
+    path: "/page/:filePath",
+    element: <MarkdownPage />,
+  }
 ]);
 
 root.render(
